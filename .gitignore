@@ -1,0 +1,27 @@
+# Node.js
+node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Environment Variables
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# Logs
+*.log
