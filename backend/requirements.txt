@@ -22,4 +22,4 @@ SQLAlchemy==2.0.51
 typing-inspection==0.4.2
 typing_extensions==4.16.0
 uvicorn==0.51.0
-email-validator>=2.0.0
+email-validator==2.3.0
