@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://127.0.0.1:8000/expense";
+const API = "https://raitha-mithra-backend.onrender.com";
 
 export interface Expense {
   id?: number;
