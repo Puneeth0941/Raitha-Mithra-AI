@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "https://raitha-mithra-backend.onrender.com";
+const API = "import.meta.env.VITE_API_URL";
 
 export interface Farm {
   id?: number;
