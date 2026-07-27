@@ -85,5 +85,16 @@ def upload_profile_photo(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(photo.file, buffer)
 
-    return {"photo_url": f"http://127.0.0.1:8000/{file_path}"}
+    from fastapi import Request
+
+@router.post("/photo")
+def upload_profile_photo(
+    request: Request,
+    photo: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    ...
+    return {
+        "photo_url": f"{request.base_url}{file_path}"
+    }
 

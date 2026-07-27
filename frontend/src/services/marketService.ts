@@ -1,6 +1,10 @@
-import axios from "axios";
+import { API } from "./authService";
 
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+const BASE = "/market";
+
+// --------------------
+// Interfaces
+// --------------------
 
 export interface HistoricalPrice {
   date: string;
@@ -23,12 +27,23 @@ export interface LivePricesResponse {
   coconut: CommodityPriceInfo;
 }
 
-export const getLiveMarketPrices = async (market?: string): Promise<LivePricesResponse> => {
-  const response = await axios.get(`${API_URL}/live-prices`, {
+// --------------------
+// Live Market Prices
+// --------------------
+
+export const getLiveMarketPrices = async (
+  market?: string
+): Promise<LivePricesResponse> => {
+  const response = await API.get(`${BASE}/live-prices`, {
     params: market ? { market } : {},
   });
+
   return response.data;
 };
+
+// --------------------
+// Markets List
+// --------------------
 
 export interface MarketItem {
   id: number;
@@ -45,22 +60,33 @@ export const getMarketsList = async (): Promise<string[]> => {
     "Sirsi APMC",
     "Channagiri APMC",
   ];
+
   try {
-    const response = await axios.get(`${API_URL}/markets`);
+    const response = await API.get(`${BASE}/markets`);
+
     const rawData = response.data?.output?.data || response.data;
+
     if (Array.isArray(rawData) && rawData.length > 0) {
       const apiMarkets = rawData
-        .map((m: any) => (typeof m === "string" ? m : m.name || m.market_name))
+        .map((m: any) =>
+          typeof m === "string"
+            ? m
+            : m.name || m.market_name || ""
+        )
         .filter(Boolean);
-      // Combine with required APMCs, removing duplicates
-      const set = new Set([...defaultMarkets, ...apiMarkets]);
-      return Array.from(set);
+
+      return [...new Set([...defaultMarkets, ...apiMarkets])];
     }
   } catch (err) {
-    console.error("Error fetching markets list from backend:", err);
+    console.error("Error fetching markets:", err);
   }
+
   return defaultMarkets;
 };
+
+// --------------------
+// Predictions
+// --------------------
 
 export interface PredictionDetail {
   price: number;
@@ -96,9 +122,12 @@ export interface MarketPredictionsResponse {
   coconut: CommodityPredictionInfo;
 }
 
-export const getMarketPredictions = async (market?: string): Promise<MarketPredictionsResponse> => {
-  const response = await axios.get(`${API_URL}/predictions`, {
+export const getMarketPredictions = async (
+  market?: string
+): Promise<MarketPredictionsResponse> => {
+  const response = await API.get(`${BASE}/predictions`, {
     params: market ? { market } : {},
   });
+
   return response.data;
 };

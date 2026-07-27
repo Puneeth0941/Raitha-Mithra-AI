@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface ProfileData {
   id?: number;
@@ -12,21 +10,35 @@ export interface ProfileData {
   farm_area?: string;
 }
 
+const BASE = "/profile";
+
+// Get profile
 export const getProfile = async (): Promise<ProfileData> => {
-  const response = await axios.get(`${API_URL}/me`);
+  const response = await API.get(`${BASE}/me`);
   return response.data;
 };
 
-export const updateProfile = async (data: ProfileData): Promise<ProfileData> => {
-  const response = await axios.put(`${API_URL}/me`, data);
+// Update profile
+export const updateProfile = async (
+  data: ProfileData
+): Promise<ProfileData> => {
+  const response = await API.put(`${BASE}/me`, data);
   return response.data;
 };
 
-export const uploadProfilePhoto = async (file: File): Promise<{ photo_url: string }> => {
+// Upload profile photo
+export const uploadProfilePhoto = async (
+  file: File
+): Promise<{ photo_url: string }> => {
   const formData = new FormData();
+
   formData.append("photo", file);
-  const response = await axios.post(`${API_URL}/photo`, formData, {
-    headers: { "Content-Type": "multipart/form-data" }
+
+  const response = await API.post(`${BASE}/photo`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
+
   return response.data;
 };

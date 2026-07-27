@@ -1,26 +1,23 @@
 import axios from "axios";
 
-// Backend Base URL
+// Create Axios instance
 export const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-// Configure global request interceptor to attach token to all axios calls
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Attach JWT token to every request
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
 
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // ----------------------
 // Register User
@@ -44,7 +41,6 @@ export const loginUser = async (userData: {
 }) => {
   const response = await API.post("/auth/login", userData);
 
-  // Save JWT token
   if (response.data?.access_token) {
     localStorage.setItem("token", response.data.access_token);
   }
@@ -53,16 +49,10 @@ export const loginUser = async (userData: {
 };
 
 // ----------------------
-// Get Current User Profile
+// Get Current User
 // ----------------------
 export const getCurrentUser = async () => {
-  const token = getToken();
-  if (!token) return null;
-  const response = await API.get("/auth/me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await API.get("/auth/me");
   return response.data;
 };
 
@@ -74,7 +64,7 @@ export const logoutUser = () => {
 };
 
 // ----------------------
-// Get Saved Token
+// Get Token
 // ----------------------
 export const getToken = () => {
   return localStorage.getItem("token");
