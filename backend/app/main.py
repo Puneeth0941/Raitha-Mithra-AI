@@ -28,6 +28,9 @@ app = FastAPI(
     title="AgriWise AI API",
     version="1.0.0"
 )
+from fastapi.staticfiles import StaticFiles
+
+
 
 # Create database tables
 Base.metadata.create_all(bind=engine)

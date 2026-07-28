@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface Activity {
   id?: number;
@@ -14,7 +12,7 @@ export interface Activity {
 
 // Get All Activities
 export const getAllActivities = async (): Promise<Activity[]> => {
-  const response = await axios.get(`${API}/all`);
+  const response = await API.get("/activity/all");
   return response.data;
 };
 
@@ -22,7 +20,7 @@ export const getAllActivities = async (): Promise<Activity[]> => {
 export const addActivity = async (
   activity: Activity
 ): Promise<Activity> => {
-  const response = await axios.post(`${API}/add`, activity);
+  const response = await API.post("/activity/add", activity);
   return response.data;
 };
 
@@ -31,11 +29,11 @@ export const updateActivity = async (
   id: number,
   activity: Activity
 ): Promise<Activity> => {
-  const response = await axios.put(`${API}/update/${id}`, activity);
+  const response = await API.put(`/activity/update/${id}`, activity);
   return response.data;
 };
 
 // Delete Activity
 export const deleteActivity = async (id: number): Promise<void> => {
-  await axios.delete(`${API}/delete/${id}`);
+  await API.delete(`/activity/delete/${id}`);
 };

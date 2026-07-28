@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface SprayRecommendation {
   status: string;
@@ -44,11 +42,18 @@ export const getWeatherRecommendations = async (
   farmId: number,
   dryingStartDate?: string
 ): Promise<WeatherRecommendationResponse> => {
-  const params: Record<string, any> = { farm_id: farmId };
+  const params: Record<string, any> = {
+    farm_id: farmId,
+  };
+
   if (dryingStartDate) {
     params.drying_start_date = dryingStartDate;
   }
-  const response = await axios.get(`${API_URL}/weather-recommendations`, { params });
+
+  const response = await API.get("/ai/weather-recommendations", {
+    params,
+  });
+
   return response.data;
 };
 
@@ -58,14 +63,19 @@ export interface ChatMessage {
   source?: string;
 }
 
+export interface ChatResponse {
+  answer: string;
+  source?: string;
+}
+
 export const sendChatMessage = async (
   question: string,
   history: ChatMessage[] = []
-): Promise<{ answer: string; source?: string }> => {
-  const response = await axios.post(`${API_URL}/chat`, {
+): Promise<ChatResponse> => {
+  const response = await API.post("/ai/chat", {
     question,
-    history
+    history,
   });
+
   return response.data;
 };
-

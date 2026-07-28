@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface Expense {
   id?: number;
@@ -13,7 +11,7 @@ export interface Expense {
 
 // Get all expenses
 export const getAllExpenses = async (): Promise<Expense[]> => {
-  const response = await axios.get(`${API}/all`);
+  const response = await API.get("/expense/all");
   return response.data;
 };
 
@@ -21,7 +19,7 @@ export const getAllExpenses = async (): Promise<Expense[]> => {
 export const addExpense = async (
   expense: Expense
 ): Promise<Expense> => {
-  const response = await axios.post(`${API}/add`, expense);
+  const response = await API.post("/expense/add", expense);
   return response.data;
 };
 
@@ -30,7 +28,7 @@ export const updateExpense = async (
   id: number,
   expense: Expense
 ): Promise<Expense> => {
-  const response = await axios.put(`${API}/update/${id}`, expense);
+  const response = await API.put(`/expense/update/${id}`, expense);
   return response.data;
 };
 
@@ -38,5 +36,5 @@ export const updateExpense = async (
 export const deleteExpense = async (
   id: number
 ): Promise<void> => {
-  await axios.delete(`${API}/delete/${id}`);
+  await API.delete(`/expense/delete/${id}`);
 };

@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface WeatherData {
   city: string;
@@ -13,6 +11,6 @@ export interface WeatherData {
 export const getWeather = async (
   city: string
 ): Promise<WeatherData> => {
-  const response = await axios.get(`${API_URL}/${city}`);
+  const response = await API.get(`/weather/${city}`);
   return response.data;
 };

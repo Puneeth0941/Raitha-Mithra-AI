@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface FarmReport {
   farm_name: string;
@@ -33,12 +31,16 @@ export interface OverallReport {
   crop_wise_profit: CropProfitData[];
 }
 
-export const getFarmReport = async (farmId: number): Promise<FarmReport> => {
-  const response = await axios.get(`${API_URL}/farm/${farmId}`);
+// Get report for a specific farm
+export const getFarmReport = async (
+  farmId: number
+): Promise<FarmReport> => {
+  const response = await API.get(`/report/farm/${farmId}`);
   return response.data;
 };
 
+// Get overall report
 export const getOverallReport = async (): Promise<OverallReport> => {
-  const response = await axios.get(`${API_URL}/overall`);
+  const response = await API.get("/report/overall");
   return response.data;
 };

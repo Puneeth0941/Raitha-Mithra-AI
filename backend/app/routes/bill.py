@@ -93,14 +93,13 @@ def upload_bill(
 
     # 5. Create DB Record
     bill = Bill(
-        user_id=current_user.id,
-        farm_id=farm_id,
-        bill_type=bill_type,
-        image_url=file_path,
-        date=parsed_date or date.today(),
-        notes=notes
-    )
-
+    user_id=current_user.id,
+    farm_id=farm_id,
+    bill_type=bill_type,
+    image_url=f"/uploads/bills/{safe_filename}",
+    date=parsed_date or date.today(),
+    notes=notes
+)
     db.add(bill)
     db.commit()
     db.refresh(bill)
@@ -141,27 +140,46 @@ def download_bill(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    user_farm_ids = [f.id for f in db.query(Farm).filter(Farm.user_id == current_user.id).all()]
+    user_farm_ids = [
+        f.id for f in db.query(Farm)
+        .filter(Farm.user_id == current_user.id)
+        .all()
+    ]
+
     bill = db.query(Bill).filter(
         Bill.id == bill_id,
-        (Bill.user_id == current_user.id) | (Bill.farm_id.in_(user_farm_ids))
+        (Bill.user_id == current_user.id) |
+        (Bill.farm_id.in_(user_farm_ids))
     ).first()
 
-    if not bill or not os.path.exists(bill.image_url):
-        raise HTTPException(status_code=404, detail="Bill file not found or access denied")
+    if not bill:
+        raise HTTPException(
+            status_code=404,
+            detail="Bill not found or access denied"
+        )
 
-    ext = os.path.splitext(bill.image_url)[1].lower()
+    file_path = bill.image_url.lstrip("/")
+
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=404,
+            detail="Bill file not found"
+        )
+
+    ext = os.path.splitext(file_path)[1].lower()
+
     media_types = {
         ".pdf": "application/pdf",
         ".png": "image/png",
         ".jpg": "image/jpeg",
         ".jpeg": "image/jpeg",
     }
+
     media_type = media_types.get(ext, "application/octet-stream")
 
     return FileResponse(
-        path=bill.image_url,
-        filename=os.path.basename(bill.image_url),
+        path=file_path,
+        filename=os.path.basename(file_path),
         media_type=media_type
     )
 
@@ -172,10 +190,16 @@ def delete_bill(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    user_farm_ids = [f.id for f in db.query(Farm).filter(Farm.user_id == current_user.id).all()]
+    user_farm_ids = [
+        f.id for f in db.query(Farm)
+        .filter(Farm.user_id == current_user.id)
+        .all()
+    ]
+
     bill = db.query(Bill).filter(
         Bill.id == bill_id,
-        (Bill.user_id == current_user.id) | (Bill.farm_id.in_(user_farm_ids))
+        (Bill.user_id == current_user.id) |
+        (Bill.farm_id.in_(user_farm_ids))
     ).first()
 
     if not bill:
@@ -184,9 +208,11 @@ def delete_bill(
             detail="Bill record not found or access denied"
         )
 
-    if os.path.exists(bill.image_url):
+    file_path = bill.image_url.lstrip("/")
+
+    if os.path.exists(file_path):
         try:
-            os.remove(bill.image_url)
+            os.remove(file_path)
         except Exception as e:
             print(f"Error deleting bill file: {e}")
 

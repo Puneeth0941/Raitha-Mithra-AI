@@ -54,7 +54,9 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.is_read).length;
+  const unreadCount = Array.isArray(notifications)
+  ? notifications.filter((n) => !n.is_read).length
+  : 0;
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);

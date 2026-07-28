@@ -1,6 +1,6 @@
-import axios from "axios";
+import { API } from "./authService";
 
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+const BASE = "/notifications";
 
 export interface NotificationData {
   id: number;
@@ -13,27 +13,36 @@ export interface NotificationData {
   created_at: string;
 }
 
+// Get notifications
 export const getNotifications = async (): Promise<NotificationData[]> => {
-  const response = await axios.get(`${API_URL}/`);
+  const response = await API.get(`${BASE}/`);
+  return Array.isArray(response.data) ? response.data : [];
+};
+
+// Mark one notification as read
+export const markAsRead = async (
+  id: number
+): Promise<NotificationData> => {
+  const response = await API.put(`${BASE}/${id}/read`);
   return response.data;
 };
 
-export const markAsRead = async (id: number): Promise<NotificationData> => {
-  const response = await axios.put(`${API_URL}/${id}/read`);
-  return response.data;
-};
-
+// Mark all as read
 export const markAllAsRead = async (): Promise<{ message: string }> => {
-  const response = await axios.put(`${API_URL}/read-all`);
+  const response = await API.put(`${BASE}/read-all`);
   return response.data;
 };
 
-export const deleteNotification = async (id: number): Promise<{ message: string }> => {
-  const response = await axios.delete(`${API_URL}/${id}`);
+// Delete one notification
+export const deleteNotification = async (
+  id: number
+): Promise<{ message: string }> => {
+  const response = await API.delete(`${BASE}/${id}`);
   return response.data;
 };
 
+// Clear all notifications
 export const clearAllNotifications = async (): Promise<{ message: string }> => {
-  const response = await axios.delete(`${API_URL}/clear-all`);
+  const response = await API.delete(`${BASE}/clear-all`);
   return response.data;
 };

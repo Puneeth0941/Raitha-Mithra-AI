@@ -171,9 +171,18 @@ export default function BillPage() {
   };
 
   const getFullImageUrl = (path: string) => {
-    if (path.startsWith("http://") || path.startsWith("https://")) return path;
-    return `http://127.0.0.1:8000/${path}`;
-  };
+    if (!path) return "";
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+        return path;
+    }
+
+    const baseUrl = import.meta.env.VITE_API_URL;
+
+    return path.startsWith("/")
+        ? `${baseUrl}${path}`
+        : `${baseUrl}/${path}`;
+};
 
   const isPdfFile = (path: string) => {
     return path.toLowerCase().endsWith(".pdf");

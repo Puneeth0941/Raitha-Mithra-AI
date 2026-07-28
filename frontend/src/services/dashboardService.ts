@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "https://raitha-mithra-backend.onrender.com";
+import { API } from "./authService";
 
 export interface DashboardData {
   total_farms: number;
@@ -11,11 +9,18 @@ export interface DashboardData {
   total_coconut_trees: number;
 }
 
-export const getDashboardData = async (farmId?: number): Promise<DashboardData> => {
+export const getDashboardData = async (
+  farmId?: number
+): Promise<DashboardData> => {
   const params: Record<string, any> = {};
+
   if (farmId !== undefined && farmId !== null) {
     params.farm_id = farmId;
   }
-  const response = await axios.get(`${API_URL}/`, { params });
+
+  const response = await API.get("/dashboard", {
+    params,
+  });
+
   return response.data;
 };
